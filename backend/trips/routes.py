@@ -6,6 +6,19 @@ from fastapi import Depends, Response, status, HTTPException, APIRouter
 from auth import get_cur_user
 from .forms import BookRequest
 from payments.routes import create_payment
+import uuid
+
+from datetime import datetime,timezone,timedelta
+
+from fastapi import APIRouter,HTTPException,Depends
+from sqlalchemy.orm import Session
+
+from database import get_db
+from models import TripsDB,BookingsDB
+from auth import get_cur_user
+
+from payments.routes import create_payment
+from .forms import BookRequest
 
 router = APIRouter(prefix="/trips")
 
@@ -16,12 +29,65 @@ def get_ticket(db: Session=Depends(get_db)):
     return trips
 
 
+# @router.post("/book")
+# async def book_ticket(
+#     data: BookRequest,
+#     db: Session = Depends(get_db),
+#     user_id: int = Depends(get_cur_user)
+# ):
+
+#     trip = (
+#         db.query(TripsDB)
+#         .filter(
+#             TripsDB.t_bus_id == data.bus_id,
+#             TripsDB.t_time == data.bus_slot
+#         )
+#         .first()
+#     )
+
+#     if not trip:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="Trip not found"
+#         )
+
+#     if trip.t_available_seats <= 0:
+#         raise HTTPException(
+#             status_code=409,
+#             detail="No seats available"
+#         )
+
+#     # Create Cashfree payment
+#     payment = await create_payment()
+
+#     return {
+#         "trip_id": trip.trip_id,
+#         "user_id": user_id,
+#         "available_seats": trip.t_available_seats,
+#         "payment": payment
+#     }
+
 @router.post("/book")
 async def book_ticket(
     data: BookRequest,
     db: Session = Depends(get_db),
-    user_id: int = Depends(get_cur_user)
+    user_id = Depends(get_cur_user)
 ):
+    existing_booking = (
+    db.query(BookingsDB)
+        .filter(
+            BookingsDB.b_trip_id == trip.t_id,
+            BookingsDB.u_id == user_id,
+            BookingsDB.b_status.in_(["PENDING","CONFIRMED"])
+        )
+        .first()
+    )
+
+    if existing_booking:
+        raise HTTPException(
+            status_code=409,
+            detail="You have already booked this trip"
+    )
 
     trip = (
         db.query(TripsDB)
@@ -29,27 +95,61 @@ async def book_ticket(
             TripsDB.t_bus_id == data.bus_id,
             TripsDB.t_time == data.bus_slot
         )
+        .with_for_update()
         .first()
     )
 
     if not trip:
+
         raise HTTPException(
             status_code=404,
             detail="Trip not found"
         )
 
     if trip.t_available_seats <= 0:
+
         raise HTTPException(
             status_code=409,
             detail="No seats available"
         )
 
-    # Create Cashfree payment
-    payment = await create_payment()
+    order_id = f"ridedmj_{uuid.uuid4().hex[:12]}"
+
+    now = datetime.now(timezone.utc)
+
+    booking = BookingsDB(
+        b_trip_id=trip.t_id,
+        u_id=user_id,
+        b_order_id=order_id,
+        b_createdat=now,
+        b_status="PENDING",
+        b_expiresat=now + timedelta(minutes=10)
+    )
+
+    trip.t_available_seats -= 1
+
+    db.add(booking)
+
+    try:
+
+        payment = await create_payment(order_id)
+
+        db.commit()
+        db.refresh(booking)
+
+    except Exception:
+
+        db.rollback()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to create payment"
+        )
 
     return {
-        "trip_id": trip.trip_id,
-        "user_id": user_id,
+        "success": True,
+        "trip_id": trip.t_id,
+        "booking_id": booking.b_id,
         "available_seats": trip.t_available_seats,
         "payment": payment
     }
