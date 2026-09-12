@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from payments.routes import router as payment_router
+from trips.routes import router as trips_router
 from database import Base
 import models
 
@@ -16,4 +17,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(payment_router)
+app.include_router(payment_router, prefix="/api")
+app.include_router(trips_router, prefix="/api")
