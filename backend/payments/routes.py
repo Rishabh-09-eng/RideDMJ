@@ -284,8 +284,9 @@ async def payment_verify(
             "booking_id": booking.b_id
         }
 
-    if booking.b_status == "CONFIRMED":
-
+    if payment["status"] == "PAID":
+        booking.b_status = "CONFIRMED"
+        booking.b_expiresat = None
         return {
             "success": True,
             "message": "Payment already confirmed",
@@ -293,8 +294,7 @@ async def payment_verify(
             "booking_id": booking.b_id
         }
 
-    booking.b_status = "CONFIRMED"
-    booking.b_expiresat = None
+
 
     db.commit()
     db.refresh(booking)
