@@ -23,10 +23,10 @@ const Hero = () => {
         </p>
 
         <div className="flex gap-10">
-            <Link href="/busschedule"><button className="mt-6 rounded-lg bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600">
+            <Link href="/busschedule"><button className="cursor-pointer mt-6 rounded-lg bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600">
               Explore Bus Schedules
             </button></Link>
-            <Link href="/book-ticket"><button className="mt-6 rounded-lg bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600">
+            <Link href="/book-ticket"><button className="cursor-pointer mt-6 rounded-lg bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600">
               Book Ticket
             </button></Link>
         </div>

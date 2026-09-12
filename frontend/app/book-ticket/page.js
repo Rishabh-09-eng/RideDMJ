@@ -1,19 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import schedule from "@/data/schedule";
 
 export default function BookTicketPage() {
-  const router = useRouter();
-
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
   });
 
   const handleSlotSelect = (slot) => {
-    const isAvailableToday = slot.operatingDays.includes(today);
-
-    if (!isAvailableToday) {
+    if (!slot.operatingDays.includes(today)) {
       return;
     }
   };
