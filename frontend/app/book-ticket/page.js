@@ -1,17 +1,14 @@
 "use client";
 
 import schedule from "@/data/schedule";
+import {useRouter} from "next/navigation"
 
 export default function BookTicketPage() {
+  const router = useRouter()
+  const token = localStorage.getItem("token")
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
   });
-
-  const handleSlotSelect = (slot) => {
-    if (!slot.operatingDays.includes(today)) {
-      return;
-    }
-  };
 
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
@@ -45,7 +42,11 @@ export default function BookTicketPage() {
                   key={slot.id}
                   type="button"
                   disabled={!isAvailableToday}
-                  onClick={() => handleSlotSelect(slot)}
+                  onClick={() => {
+                    router.push(
+                     `/confirm?bus=${encodeURIComponent(slot.busNumber)}&time=${encodeURIComponent(slot.time)}`
+                    )
+                  }}
                   className={`rounded-xl border p-5 text-left transition ${
                     !isAvailableToday
                       ? "cursor-not-allowed border-slate-200 bg-slate-200 opacity-45"

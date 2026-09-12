@@ -22,7 +22,7 @@ const page = () => {
 
     const supabase = createClient()
 
-    const {error} = await supabase.auth.signInWithPassword({
+    const {data,error} = await supabase.auth.signInWithPassword({
         email,
         password
     })
@@ -31,6 +31,8 @@ const page = () => {
         alert(error.message)
         return
     }
+    const token = data.session.access_token
+    localStorage.setItem("token",token)
 
     router.push("/");
 }
