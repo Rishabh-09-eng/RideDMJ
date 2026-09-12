@@ -17,7 +17,7 @@ export default function BookTicketPage() {
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        {/* Page Header */}
+        
         <div className="mb-8 text-center sm:text-left">
           <p className="text-sm font-semibold text-green-600 sm:text-base">
             Today is {today}
@@ -61,10 +61,6 @@ export default function BookTicketPage() {
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-semibold text-slate-500">
                       {slot.busNumber}
-                    </span>
-
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                      Available
                     </span>
                   </div>
 
