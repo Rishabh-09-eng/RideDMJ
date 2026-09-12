@@ -9,15 +9,15 @@ exp_mins = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 sec_key = os.getenv("SECRET_KEY")
 algo = os.getenv("ALGORITHM")
 
-def create_access_token(data: dict) :
-    d_copy = data.copy()
-    expire = datetime.now(timezone.utc)+timedelta(minutes=exp_mins)
+# def create_access_token(data: dict) :
+#     d_copy = data.copy()
+#     expire = datetime.now(timezone.utc)+timedelta(minutes=exp_mins)
 
-    d_copy.update({"exp":expire})
+#     d_copy.update({"exp":expire})
 
-    token = jwt.encode(d_copy, sec_key, algorithm=algo)
+#     token = jwt.encode(d_copy, sec_key, algorithm=algo)
 
-    return token
+#     return token
 
 def verify_token(token: str, error): 
     try:
