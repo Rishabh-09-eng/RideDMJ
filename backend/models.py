@@ -39,18 +39,42 @@ class BookingsDB(Base):
     __tablename__ = "bookings"
 
     b_id = Column("id",Integer,primary_key=True)
+
     b_trip_id = Column(
         "trip_id",
         Integer,
         ForeignKey("trips.id"),
         nullable=False
     )
+
     u_id = Column(
         "user_id",
         UUID,
         ForeignKey("auth.users.id"),
         nullable=False
     )
-    b_createdat = Column("created_at",DateTime,nullable=False)
-    b_status = Column("status",String,nullable=False,default="PENDING")
-    b_expiresat = Column("expires_at",DateTime)
+
+    b_order_id = Column(
+        "order_id",
+        String,
+        nullable=False,
+        unique=True
+    )
+
+    b_createdat = Column(
+        "created_at",
+        DateTime,
+        nullable=False
+    )
+
+    b_status = Column(
+        "status",
+        String,
+        nullable=False,
+        default="PENDING"
+    )
+
+    b_expiresat = Column(
+        "expires_at",
+        DateTime
+    )

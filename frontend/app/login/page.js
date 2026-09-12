@@ -1,51 +1,52 @@
-"use client"
-import {createClient} from "@/utils/supabase/client"
-import React from 'react'
-import { useState } from 'react'
-import Link from 'next/link'
+"use client";
+
+import { createClient } from "@/utils/supabase/client";
+import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const page = () => {
+const Page = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+  const router = useRouter();
 
-    const router = useRouter();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const handleSubmit = async (event) => {
-    event.preventDefault()
-
-    if(!email.endsWith("@iiitdmj.ac.in")){
-        alert("Please use college's email address")
-        return
+    if (!email.endsWith("@iiitdmj.ac.in")) {
+      alert("Please use college's email address");
+      return;
     }
 
-    const supabase = createClient()
+    const supabase = createClient();
 
-    const {data,error} = await supabase.auth.signInWithPassword({
-        email,
-        password
-    })
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if(error){
-        alert(error.message)
-        return
+    if (error) {
+      alert(error.message);
+      return;
     }
-    const token = data.session.access_token
-    localStorage.setItem("token",token)
+
+    const token = data.session.access_token;
+    localStorage.setItem("token", token);
 
     router.push("/");
-}
+  };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-10">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-slate-900">
+    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-lg sm:p-8">
+
+        <div className="mb-7 text-center sm:mb-8">
+          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
             Welcome Back
           </h1>
 
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-sm text-slate-600 sm:text-base">
             Login to your RideDMJ account
           </p>
         </div>
@@ -54,7 +55,7 @@ const page = () => {
           <div>
             <label
               htmlFor="email"
-              className="mb-2 block font-medium text-slate-700"
+              className="mb-2 block text-sm font-medium text-slate-700 sm:text-base"
             >
               College Email
             </label>
@@ -66,14 +67,14 @@ const page = () => {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-200 sm:px-4 sm:text-base"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="mb-2 block font-medium text-slate-700"
+              className="mb-2 block text-sm font-medium text-slate-700 sm:text-base"
             >
               Password
             </label>
@@ -85,30 +86,30 @@ const page = () => {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-200 sm:px-4 sm:text-base"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-green-500 px-4 py-3 font-semibold text-white transition hover:bg-green-600"
+            className="w-full rounded-lg bg-green-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:text-base"
           >
             Login
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm leading-relaxed text-slate-600">
           New to RideDMJ?{" "}
           <Link
             href="/register"
-            className="font-semibold text-green-600 hover:text-green-700"
+            className="font-semibold text-green-600 transition hover:text-green-700"
           >
             Create an account
           </Link>
         </p>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

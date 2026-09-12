@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 export default function BookTicketPage() {
   const router = useRouter();
 
-  const token = localStorage.getItem("token");
-
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
   });
@@ -17,33 +15,36 @@ export default function BookTicketPage() {
   );
 
   return (
-    <main className="min-h-screen bg-slate-100 px-6 py-10">
+    <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
-          <p className="font-semibold text-green-600">
+        
+        <div className="mb-8 text-center sm:text-left">
+          <p className="text-sm font-semibold text-green-600 sm:text-base">
             Today is {today}
           </p>
 
-          <h1 className="mt-2 text-4xl font-bold text-slate-900">
+          <h1 className="mt-2 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
             Book Your Bus Ticket
           </h1>
 
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
             Select an available bus from Institute to Sadar.
           </p>
         </div>
 
         <section>
-          <h2 className="mb-4 text-2xl font-semibold text-slate-900">
+          <h2 className="mb-4 text-xl font-semibold text-slate-900 sm:text-2xl">
             Available Bus Slots
           </h2>
 
           {availableSlots.length === 0 ? (
-            <p className="rounded-xl bg-white p-6 text-slate-600">
-              No bus slots are available today.
-            </p>
+            <div className="rounded-xl bg-white p-5 text-center shadow-sm sm:p-6 sm:text-left">
+              <p className="text-sm text-slate-600 sm:text-base">
+                No bus slots are available today.
+              </p>
+            </div>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {availableSlots.map((slot) => (
                 <button
                   key={slot.id}
@@ -55,23 +56,19 @@ export default function BookTicketPage() {
                       )}&time=${encodeURIComponent(slot.time)}`
                     );
                   }}
-                  className="rounded-xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-1 hover:border-green-400 hover:shadow-md"
+                  className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:border-green-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:p-5"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-semibold text-slate-500">
                       {slot.busNumber}
                     </span>
-
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                      Available
-                    </span>
                   </div>
 
-                  <h3 className="mt-5 text-3xl font-bold text-slate-900">
+                  <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:mt-5 sm:text-3xl">
                     {slot.time}
                   </h3>
 
-                  <p className="mt-2 text-sm text-slate-600">
+                  <p className="mt-2 text-sm text-slate-600 sm:text-base">
                     Institute → Sadar
                   </p>
 
