@@ -1,22 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import schedule from "@/data/schedule";
+import { useRouter } from "next/navigation";
 
 export default function BookTicketPage() {
   const router = useRouter();
+
+  const token = localStorage.getItem("token");
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
   });
 
-  const handleSlotSelect = (slot) => {
-    const isAvailableToday = slot.operatingDays.includes(today);
-
-    if (!isAvailableToday) {
-      return;
-    }
-  };
+  const availableSlots = schedule.filter((slot) =>
+    slot.operatingDays.includes(today)
+  );
 
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
@@ -40,38 +38,32 @@ export default function BookTicketPage() {
             Available Bus Slots
           </h2>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {schedule.map((slot) => {
-              const isAvailableToday =
-                slot.operatingDays.includes(today);
-
-              return (
+          {availableSlots.length === 0 ? (
+            <p className="rounded-xl bg-white p-6 text-slate-600">
+              No bus slots are available today.
+            </p>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {availableSlots.map((slot) => (
                 <button
                   key={slot.id}
                   type="button"
-                  disabled={!isAvailableToday}
-                  onClick={() => handleSlotSelect(slot)}
-                  className={`rounded-xl border p-5 text-left transition ${
-                    !isAvailableToday
-                      ? "cursor-not-allowed border-slate-200 bg-slate-200 opacity-45"
-                      : "border-slate-200 bg-white hover:-translate-y-1 hover:border-green-400 hover:shadow-md"
-                  }`}
+                  onClick={() => {
+                    router.push(
+                      `/confirm?bus=${encodeURIComponent(
+                        slot.busNumber
+                      )}&time=${encodeURIComponent(slot.time)}`
+                    );
+                  }}
+                  className="rounded-xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-1 hover:border-green-400 hover:shadow-md"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-slate-500">
                       {slot.busNumber}
                     </span>
 
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        isAvailableToday
-                          ? "bg-green-100 text-green-700"
-                          : "bg-slate-300 text-slate-600"
-                      }`}
-                    >
-                      {isAvailableToday
-                        ? "Available"
-                        : "Not running"}
+                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                      Available
                     </span>
                   </div>
 
@@ -84,14 +76,12 @@ export default function BookTicketPage() {
                   </p>
 
                   <p className="mt-4 text-sm font-semibold text-green-600">
-                    {isAvailableToday
-                      ? "Click to book →"
-                      : "Unavailable today"}
+                    Click to book →
                   </p>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </main>
