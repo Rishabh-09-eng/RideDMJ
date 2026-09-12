@@ -1,5 +1,5 @@
 "use client"
-
+import {createClient} from "@/utils/supabase/client"
 import React from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -9,14 +9,28 @@ const page = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = async (event) => {
+    event.preventDefault()
 
-        if(!email.endsWith("@iiitdmj.ac.in")){
-            alert("Please use college's email address");
-            return;
-        }
+    if(!email.endsWith("@iiitdmj.ac.in")){
+        alert("Please use college's email address")
+        return
     }
+
+    const supabase = createClient()
+
+    const {error} = await supabase.auth.signInWithPassword({
+        email,
+        password
+    })
+
+    if(error){
+        alert(error.message)
+        return
+    }
+
+    alert("Login successful!")
+}
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-10">
