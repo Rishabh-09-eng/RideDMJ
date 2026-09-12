@@ -61,7 +61,7 @@ const Navbar = () => {
             </div></Link>
             <ul className='flex gap-10'>
                 <Link href="/"><li className='text-white font-bold'>Home</li></Link>
-                <Link href=""><li className='text-white font-bold'>Bus Schedule</li></Link>
+                <Link href="/busschedule"><li className='text-white font-bold'>Bus Schedule</li></Link>
                 <Link href=""><li className='text-white font-bold'>My Booking</li></Link>
                 <Link href=""><li className='text-white font-bold'>Contact</li></Link>
             </ul>
