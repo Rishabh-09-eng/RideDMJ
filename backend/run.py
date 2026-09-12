@@ -1,36 +1,10 @@
-import os
-
 from fastapi import FastAPI
-from dotenv import load_dotenv
-from supabase import create_client
-
-load_dotenv()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-supabase = create_client(SUPABASE_URL,SUPABASE_KEY)
+from payments.routes import router as payment_router
+from database import engine
+from fastapi import FastAPI
 
 app = FastAPI()
 
-
-@app.get("/")
-def home():
-    return {"message":"RideDMJ backend is running"}
-
-
-@app.get("/supabase-test")
-def supabase_test():
-    try:
-        response = supabase.table("test").select("*").execute()
-
-        return {
-            "connected":True,
-            "data":response.data
-        }
-
-    except Exception as e:
-        return {
-            "connected":False,
-            "error":str(e)
-        }
+from .users.routes import router
+ 
+app.include_router(payment_router)
