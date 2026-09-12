@@ -1,27 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import schedule from "@/data/schedule";
 
 export default function BookTicketPage() {
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const router = useRouter();
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
   });
 
   const handleSlotSelect = (slot) => {
-    if (!slot.operatingDays.includes(today)) {
+    const isAvailableToday = slot.operatingDays.includes(today);
+
+    if (!isAvailableToday) {
       return;
     }
-
-    setSelectedSlot(slot);
   };
 
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <div className="mx-auto max-w-6xl">
-        {/* Page heading */}
         <div className="mb-8">
           <p className="font-semibold text-green-600">
             Today is {today}
@@ -36,7 +35,6 @@ export default function BookTicketPage() {
           </p>
         </div>
 
-        {/* Bus slots */}
         <section>
           <h2 className="mb-4 text-2xl font-semibold text-slate-900">
             Available Bus Slots
@@ -44,8 +42,8 @@ export default function BookTicketPage() {
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {schedule.map((slot) => {
-              const isAvailableToday = slot.operatingDays.includes(today);
-              const isSelected = selectedSlot?.id === slot.id;
+              const isAvailableToday =
+                slot.operatingDays.includes(today);
 
               return (
                 <button
@@ -56,9 +54,7 @@ export default function BookTicketPage() {
                   className={`rounded-xl border p-5 text-left transition ${
                     !isAvailableToday
                       ? "cursor-not-allowed border-slate-200 bg-slate-200 opacity-45"
-                      : isSelected
-                        ? "border-green-500 bg-green-50 ring-2 ring-green-500"
-                        : "border-slate-200 bg-white hover:-translate-y-1 hover:border-green-400 hover:shadow-md"
+                      : "border-slate-200 bg-white hover:-translate-y-1 hover:border-green-400 hover:shadow-md"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -73,7 +69,9 @@ export default function BookTicketPage() {
                           : "bg-slate-300 text-slate-600"
                       }`}
                     >
-                      {isAvailableToday ? "Available" : "Not running"}
+                      {isAvailableToday
+                        ? "Available"
+                        : "Not running"}
                     </span>
                   </div>
 
@@ -83,6 +81,12 @@ export default function BookTicketPage() {
 
                   <p className="mt-2 text-sm text-slate-600">
                     Institute → Sadar
+                  </p>
+
+                  <p className="mt-4 text-sm font-semibold text-green-600">
+                    {isAvailableToday
+                      ? "Click to book →"
+                      : "Unavailable today"}
                   </p>
                 </button>
               );
