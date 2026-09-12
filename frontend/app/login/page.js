@@ -3,11 +3,14 @@ import {createClient} from "@/utils/supabase/client"
 import React from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from "next/navigation";
 
 const page = () => {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const router = useRouter();
 
     const handleSubmit = async (event) => {
     event.preventDefault()
@@ -29,7 +32,7 @@ const page = () => {
         return
     }
 
-    alert("Login successful!")
+    router.push("/");
 }
 
   return (
