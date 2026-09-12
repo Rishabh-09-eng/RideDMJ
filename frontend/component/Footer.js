@@ -1,57 +1,123 @@
-import React from 'react'
-import Link from 'next/link'
+import React from "react";
+import Link from "next/link";
 
-const footer = () => {
+const Footer = () => {
   return (
-    <footer className='bg-gray-500 text-white/60 text-[14px] px-6 py-3'>
-        <div className='text-white font-bold pb-4'>
-            <h3>RideDMJ</h3>
-            <p>Your digital bus ticketing platform for IIITDMJ.</p>
-        </div>
-        <div className='grid grid-cols-3 pb-4'>
-            <div>
-                <h4 className='text-white font-semibold'>Quick Links</h4>
-                <ul className='flex flex-col'>
-                    <Link href="/"><li>Home</li></Link>
-                    <Link href="book-ticket"><li>Book Ticket</li></Link>
-                    <Link href="about"><li>About</li></Link>
-                </ul>
-            </div>
-            <div>
-                <h4 className='text-white font-semibold'>Important</h4>
-                <ul className='flex flex-col'>
-                    <Link href="busschedule"><li>Bus Schedule</li></Link>
-                    <Link href="booking-guidance"><li>Booking Guidance</li></Link>
-                </ul>
-            </div>
-            <div>
-                <h4 className='text-white font-semibold'>Connect</h4>
-                <ul className='flex flex-col'>
-                    <a
-                      href="https://github.com/Rishabh-09-eng/RideDMJ"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      GitHub
-                    </a>
-                    <a
-                      href="https://www.iiitdmj.ac.in/downloads/time%20table%20Detailed.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Contact
-                    </a>
-                    
-                </ul>
-            </div>
-        </div>
-        <div className='text-white'>
-            <p>Built with ❤️ by Team RideDMJ</p>
-            © 2026 RideDMJ. All rights reserved.
-        </div>
-    </footer>
-    
-  )
-}
+    <footer className="bg-gray-500 px-5 py-8 text-sm text-white/70 sm:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 border-b border-white/20 pb-6">
+          <h3 className="text-xl font-bold text-white sm:text-2xl">
+            RideDMJ
+          </h3>
 
-export default footer
+          <p className="mt-2 max-w-md leading-relaxed">
+            Your digital bus ticketing platform for IIITDMJ.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 border-b border-white/20 pb-8 sm:grid-cols-2 lg:grid-cols-3">
+
+          <div>
+            <h4 className="mb-3 font-semibold text-white">
+              Quick Links
+            </h4>
+
+            <ul className="flex flex-col gap-2">
+              <li>
+                <Link
+                  href="/"
+                  className="transition hover:text-green-300"
+                >
+                  Home
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/book-ticket"
+                  className="transition hover:text-green-300"
+                >
+                  Book Ticket
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/about"
+                  className="transition hover:text-green-300"
+                >
+                  About
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-3 font-semibold text-white">
+              Important
+            </h4>
+
+            <ul className="flex flex-col gap-2">
+              <li>
+                <Link
+                  href="/busschedule"
+                  className="transition hover:text-green-300"
+                >
+                  Bus Schedule
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/booking-guidance"
+                  className="transition hover:text-green-300"
+                >
+                  Booking Guidance
+                </Link>
+              </li>
+
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-3 font-semibold text-white">
+              Connect
+            </h4>
+
+            <ul className="flex flex-col gap-2">
+              <li>
+                <a
+                  href="https://github.com/Rishabh-09-eng/RideDMJ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all transition hover:text-green-300"
+                >
+                  GitHub
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="https://www.iiitdmj.ac.in/downloads/time%20table%20Detailed.pdf"
+                  className="break-all transition hover:text-green-300"
+                >
+                  Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 pt-6 text-xs sm:text-sm">
+          <p className="text-white">
+            Built with ❤️ by Team RideDMJ
+          </p>
+
+          <p>© 2026 RideDMJ. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
