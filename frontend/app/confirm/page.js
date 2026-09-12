@@ -13,13 +13,13 @@ const Page = () => {
 
   const busNumber = searchParams.get("bus");
   const time = searchParams.get("time");
+  const busId = busNumber?.replace("Bus ", "");
 
   const handlePayment = async () => {
     try {
       setLoading(true);
 
       const token = localStorage.getItem("token");
-
       if (!token) {
         alert("Please login first");
         router.push("/login");
@@ -27,20 +27,29 @@ const Page = () => {
       }
 
       const response = await fetch(
-        "http://localhost:8000/payment/create",
+        "http://localhost:8000/api/trips/book",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            bus_id: Number(busId),
+            bus_slot: time,
+          }),
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        alert(data.detail || "Could not create payment");
+        const detail = data.detail;
+        const message =
+          typeof detail === "string"
+            ? detail
+            : detail?.message || detail?.error || `Could not create payment (server returned ${response.status})`;
+        alert(message);
         return;
       }
 
@@ -49,11 +58,14 @@ const Page = () => {
       });
 
       cashfree.checkout({
-        paymentSessionId: data.payment_session_id,
+        paymentSessionId: data.payment.payment_session_id,
       });
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      const message =
+        error instanceof TypeError
+          ? "The booking server did not return a response. Check the backend terminal for the error."
+          : "Something went wrong while opening payment.";
+      alert(message);
     } finally {
       setLoading(false);
     }

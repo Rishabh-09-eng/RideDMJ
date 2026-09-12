@@ -50,17 +50,24 @@ export default function BookTicketPage() {
                   key={slot.id}
                   type="button"
                   onClick={() => {
-                    router.push(
-                      `/confirm?bus=${encodeURIComponent(
-                        slot.busNumber
-                      )}&time=${encodeURIComponent(slot.time)}`
-                    );
-                  }}
+                  console.log("SLOT:", slot);
+                  console.log("BUS:", slot.bus);
+                  console.log("TIME:", slot.time);
+                  console.log("BACKEND TIME:", slot.backend_time);
+
+                  router.push(
+                    `/confirm?bus=${encodeURIComponent(
+                      slot.bus
+                    )}&time=${encodeURIComponent(
+                      slot.backend_time
+                    )}`
+                  );
+                }}
                   className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:border-green-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:p-5"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-semibold text-slate-500">
-                      {slot.busNumber}
+                      {slot.bus}
                     </span>
                   </div>
 

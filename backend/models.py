@@ -50,7 +50,6 @@ class BookingsDB(Base):
     u_id = Column(
         "user_id",
         UUID,
-        ForeignKey("auth.users.id"),
         nullable=False
     )
 
