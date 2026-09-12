@@ -51,7 +51,7 @@ const Navbar = () => {
   
   return (
     <>
-        <nav className='flex justify-between items-center px-8 py-4 gap-10 bg-[#334155]'>
+        <nav className='flex justify-between items-center px-8 py-3 gap-10 bg-[#334155]'>
             <Link href="/"><div className='flex justify-between items-center'>
                 <Image className='' width={50} height={50} src="/logo.svg" alt="Logo" />
                 <div>
@@ -62,7 +62,7 @@ const Navbar = () => {
             <ul className='flex gap-10'>
                 <Link href="/"><li className='text-white font-bold'>Home</li></Link>
                 <Link href="/busschedule"><li className='text-white font-bold'>Bus Schedule</li></Link>
-                <Link href=""><li className='text-white font-bold'>My Booking</li></Link>
+                <Link href="/my-booking"><li className='text-white font-bold'>My Booking</li></Link>
                 <Link href=""><li className='text-white font-bold'>Contact</li></Link>
             </ul>
             <div className="relative">
@@ -71,7 +71,7 @@ const Navbar = () => {
       <button
         type="button"
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center gap-2 rounded-lg p-2 text-white transition hover:bg-slate-700"
+        className="flex items-center gap-2 rounded-lg p-2 text-white transition hover:bg-slate-700 cursor-pointer"
       >
         <UserRound className="h-6 w-6" />
 
