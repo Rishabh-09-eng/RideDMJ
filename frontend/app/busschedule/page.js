@@ -1,7 +1,7 @@
 
 const weekdaySchedule = [
 
-  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "03:00 PM" },
+  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "03:00 PM", backend_time:"15:00" },
   { bus: "Bus 1", from: "Institute", to: "Sadar", time: "03:40 PM" },
   { bus: "Bus 1", from: "Institute", to: "Sadar", time: "05:15 PM" },
   { bus: "Bus 2", from: "Institute", to: "Sadar", time: "06:00 PM" },
