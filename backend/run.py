@@ -13,6 +13,8 @@ supabase = create_client(SUPABASE_URL,SUPABASE_KEY)
 
 app = FastAPI()
 
+#don't forget to add the scheduler code
+
 
 @app.get("/")
 def home():
