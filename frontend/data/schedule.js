@@ -1,88 +1,172 @@
-const schedules = [
-  // Monday to Friday
+// Centralized Bus Schedule Data (Single Source of Truth for Frontend)
+
+export const weekdaySchedule = [
+  // Institute → Sadar (Bookable)
+  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "03:00 PM", backend_time: "15:00" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "03:40 PM", backend_time: "15:40" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "05:15 PM", backend_time: "17:15" },
+  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "06:00 PM", backend_time: "18:00" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "07:00 PM", backend_time: "19:00" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "08:20 PM", backend_time: "20:20" },
+  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "08:50 PM", backend_time: "20:50" },
+
+  // Institute → Kakartala-Gadheri
   {
-    id: "bus2-weekday-1",
     bus: "Bus 2",
-    time: "3:00 PM",
-    backend_time: "15:00",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    from: "Institute",
+    to: "Kakartala-Gadheri",
+    time: "04:30–05:40 PM",
   },
   {
-    id: "bus1-weekday-1",
-    bus: "Bus 1",
-    time: "3:40 PM",
-    backend_time: "15:00",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  },
-  {
-    id: "bus1-weekday-2",
-    bus: "Bus 1",
-    time: "5:15 PM",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  },
-  {
-    id: "bus2-weekday-2",
     bus: "Bus 2",
-    time: "6:00 PM",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  },
-  {
-    id: "bus1-weekday-3",
-    bus: "Bus 1",
-    time: "7:00 PM",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  },
-  {
-    id: "bus1-weekday-4",
-    bus: "Bus 1",
-    time: "8:20 PM",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  },
-  {
-    id: "bus2-weekday-3",
-    bus: "Bus 2",
-    time: "8:50 PM",
-    operatingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    from: "Institute",
+    to: "Kakartala-Gadheri",
+    time: "07:10–08:10 PM",
   },
 
-  // Saturday and Sunday
+  // Sadar → Institute
+  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "03:45 PM", backend_time: "15:45" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "04:30 PM", backend_time: "16:30" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "06:00 PM" },
+  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "06:30 PM", backend_time: "18:30" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "07:40 PM", backend_time: "19:40" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "09:00 PM", backend_time: "21:00" },
+  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "09:30 PM", backend_time: "21:30" },
+
+  // Kakartala-Gadheri → Institute
   {
-    id: "bus2-weekend-1",
     bus: "Bus 2",
-    time: "3:00 PM",
-    backend_time: "15:00",
-    operatingDays: ["Saturday", "Sunday"],
+    from: "Kakartala-Gadheri",
+    to: "Institute",
+    time: "04:30–05:40 PM",
   },
   {
-    id: "bus1-weekend-1",
-    bus: "Bus 1",
-    time: "3:30 PM",
-    operatingDays: ["Saturday", "Sunday"],
-  },
-  {
-    id: "bus1-weekend-2",
-    bus: "Bus 1",
-    time: "6:00 PM",
-    operatingDays: ["Saturday", "Sunday"],
-  },
-  {
-    id: "bus2-weekend-2",
     bus: "Bus 2",
-    time: "5:30 PM",
-    operatingDays: ["Saturday", "Sunday"],
-  },
-  {
-    id: "bus1-weekend-3",
-    bus: "Bus 1",
-    time: "7:00 PM",
-    operatingDays: ["Saturday", "Sunday"],
-  },
-  {
-    id: "bus2-weekend-3",
-    bus: "Bus 2",
-    time: "8:50 PM",
-    operatingDays: ["Saturday", "Sunday"],
+    from: "Kakartala-Gadheri",
+    to: "Institute",
+    time: "07:10–08:10 PM",
   },
 ];
 
-export default schedules;
+export const weekendSchedule = [
+  // Institute → Sadar (Bookable)
+  {
+    bus: "Bus 2",
+    from: "Institute",
+    to: "Sadar",
+    time: "03:00 PM",
+    backend_time: "15:00",
+    purpose: "Via Russel Chowk",
+  },
+  {
+    bus: "Bus 1",
+    from: "Institute",
+    to: "Sadar",
+    time: "03:30 PM",
+    backend_time: "15:30",
+    purpose: "Via Russel Chowk",
+  },
+  {
+    bus: "Bus 2",
+    from: "Institute",
+    to: "Sadar",
+    time: "05:30 PM",
+    backend_time: "17:30",
+  },
+  {
+    bus: "Bus 1",
+    from: "Institute",
+    to: "Sadar",
+    time: "06:00 PM",
+    backend_time: "18:00",
+  },
+  {
+    bus: "Bus 1",
+    from: "Institute",
+    to: "Sadar",
+    time: "07:00 PM",
+    backend_time: "19:00",
+  },
+  {
+    bus: "Bus 2",
+    from: "Institute",
+    to: "Sadar",
+    time: "08:50 PM",
+    backend_time: "20:50",
+  },
+
+  // Sadar → Institute
+  {
+    bus: "Bus 2",
+    from: "Sadar",
+    to: "Institute",
+    time: "04:30 PM",
+    backend_time: "16:30",
+  },
+  {
+    bus: "Bus 1",
+    from: "Sadar",
+    to: "Institute",
+    time: "05:20 PM",
+    backend_time: "17:20",
+  },
+  {
+    bus: "Bus 1",
+    from: "Sadar",
+    to: "Institute",
+    time: "06:30 PM",
+    backend_time: "18:30",
+  },
+  {
+    bus: "Bus 2",
+    from: "Sadar",
+    to: "Institute",
+    time: "07:30 PM",
+    backend_time: "19:30",
+    purpose: "Via Russel Chowk",
+  },
+  {
+    bus: "Bus 1",
+    from: "Sadar",
+    to: "Institute",
+    time: "09:15 PM",
+    backend_time: "21:15",
+    purpose: "Via Russel Chowk - Last Bus 1",
+  },
+  {
+    bus: "Bus 2",
+    from: "Sadar",
+    to: "Institute",
+    time: "09:30 PM",
+    backend_time: "21:30",
+    purpose: "Last Bus 2",
+  },
+];
+
+// Bookable slots automatically extracted for book-ticket page (Institute to Sadar)
+const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const WEEKENDS = ["Saturday", "Sunday"];
+
+const weekdayBookableSlots = weekdaySchedule
+  .filter((item) => item.from === "Institute" && item.to === "Sadar" && item.backend_time)
+  .map((item, index) => ({
+    id: `weekday-${index + 1}`,
+    bus: item.bus,
+    time: item.time,
+    backend_time: item.backend_time,
+    operatingDays: WEEKDAYS,
+  }));
+
+const weekendBookableSlots = weekendSchedule
+  .filter((item) => item.from === "Institute" && item.to === "Sadar" && item.backend_time)
+  .map((item, index) => ({
+    id: `weekend-${index + 1}`,
+    bus: item.bus,
+    time: item.time,
+    backend_time: item.backend_time,
+    operatingDays: WEEKENDS,
+  }));
+
+const allBookableSlots = [...weekdayBookableSlots, ...weekendBookableSlots];
+
+export default allBookableSlots;

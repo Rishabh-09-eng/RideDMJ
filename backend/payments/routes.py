@@ -3,7 +3,7 @@ import uuid
 import httpx
 
 from datetime import datetime,timezone
-
+import secrets
 from dotenv import load_dotenv
 
 from fastapi import APIRouter,HTTPException,Depends
@@ -44,9 +44,6 @@ async def create_payment(order_id):
         "order_currency": "INR",
         "customer_details": {
             "customer_id": "test_user",
-            "customer_name": "RideDMJ User",
-            "customer_email": "test@example.com",
-            "customer_phone": "9999999999"
         }
     }
 
@@ -149,6 +146,9 @@ async def payment_verify(
     if payment["status"] == "PAID":
         booking.b_status = "CONFIRMED"
         booking.b_expiresat = None
+
+        if not booking.b_ticket_code:
+            booking.b_ticket_code = secrets.token_urlsafe(16)
 
         db.commit()
         db.refresh(booking)

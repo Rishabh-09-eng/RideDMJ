@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from payments.routes import router as payment_router
 from trips.routes import router as trips_router
+from bookings.routes import router as bookings_router
+
 from database import Base
 import models
 
@@ -23,3 +25,4 @@ app.add_middleware(
 
 app.include_router(payment_router, prefix="/api")
 app.include_router(trips_router, prefix="/api")
+app.include_router(bookings_router, prefix="/api")
