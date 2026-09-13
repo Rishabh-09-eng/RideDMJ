@@ -61,45 +61,6 @@ def get_my_bookings(
     return {"success": True, "tickets": tickets}
 
 
-@router.get("/verify/{ticket_code}")
-def verify_ticket(ticket_code: str, db: Session = Depends(get_db)):
-    booking = db.query(BookingsDB).filter(BookingsDB.b_ticket_code == ticket_code).first()
-
-    if not booking:
-        return {"status": "ERROR", "message": "Invalid Ticket!"}
-
-    trip = db.query(TripsDB).filter(TripsDB.t_id == booking.b_trip_id).first()
-    trip_info = {
-        "bus_id": trip.t_bus_id if trip else None,
-        "date": str(trip.t_date) if trip and trip.t_date else None,
-        "time": str(trip.t_time) if trip else None,
-        "direction": trip.t_direction if trip else None,
-    } if trip else None
-
-    if booking.b_status == "USED":
-        return {
-            "status": "ERROR",
-            "message": "Ticket already USED!",
-            "trip": trip_info
-        }
-
-    if booking.b_status != "CONFIRMED":
-        return {
-            "status": "ERROR",
-            "message": f"Ticket not confirmed (Status: {booking.b_status})",
-            "trip": trip_info
-        }
-
-    # Mark as used
-    booking.b_status = "USED"
-    db.commit()
-
-    return {
-        "status": "SUCCESS",
-        "message": "✅ Ticket Verified & Marked as USED!",
-        "trip": trip_info
-    }
-
 
 @router.post("/admin/verify-ticket/{ticket_code}")
 def admin_verify_ticket(
