@@ -4,16 +4,28 @@ import { createClient } from "@/utils/supabase/client";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Captcha, { generateCaptchaCode } from "@/component/Captcha";
 
 const Page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [captchaInput, setCaptchaInput] = useState("");
+    const [captchaCode, setCaptchaCode] = useState(generateCaptchaCode);
+    const [captchaError, setCaptchaError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     const router = useRouter();
 
+    const handleRefreshCaptcha = () => {
+        setCaptchaCode(generateCaptchaCode());
+        setCaptchaInput("");
+        setCaptchaError("");
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setCaptchaError("");
 
         if (!email.endsWith("@iiitdmj.ac.in")) {
             alert("Please use college's email address");
@@ -30,23 +42,36 @@ const Page = () => {
             return;
         }
 
-        const supabase = createClient();
-
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-        });
-
-        if (error) {
-            alert(error.message);
+        // Verify CAPTCHA before signup
+        if (captchaInput.trim().toLowerCase() !== captchaCode.toLowerCase()) {
+            setCaptchaError("Incorrect CAPTCHA code. Please try again.");
+            handleRefreshCaptcha();
             return;
         }
 
-        alert(
-            "Registration successful! Please check your email to verify your account."
-        );
+        try {
+            setSubmitting(true);
+            const supabase = createClient();
 
-        router.push("/login");
+            const { error } = await supabase.auth.signUp({
+                email,
+                password,
+            });
+
+            if (error) {
+                alert(error.message);
+                handleRefreshCaptcha();
+                return;
+            }
+
+            alert(
+                "Registration successful! Please check your email to verify your account."
+            );
+
+            router.push("/login");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -122,11 +147,23 @@ const Page = () => {
                         />
                     </div>
 
+                    <Captcha
+                        captchaCode={captchaCode}
+                        onRefresh={handleRefreshCaptcha}
+                        userInput={captchaInput}
+                        onUserInputChange={(e) => {
+                            setCaptchaInput(e.target.value);
+                            if (captchaError) setCaptchaError("");
+                        }}
+                        error={captchaError}
+                    />
+
                     <button
                         type="submit"
-                        className="w-full rounded-lg bg-green-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 sm:text-base"
+                        disabled={submitting}
+                        className="w-full rounded-lg bg-green-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 sm:text-base"
                     >
-                        Create Account
+                        {submitting ? "Creating Account..." : "Create Account"}
                     </button>
                 </form>
 
