@@ -2,12 +2,12 @@
 const weekdaySchedule = [
 
   { bus: "Bus 2", from: "Institute", to: "Sadar", time: "03:00 PM", backend_time:"15:00" },
-  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "03:40 PM" },
-  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "05:15 PM" },
-  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "06:00 PM" },
-  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "07:00 PM" },
-  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "08:50 PM" },
-  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "08:20 PM" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "03:40 PM", backend_time:"15:40" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "05:15 PM", backend_time:"17:10" },
+  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "06:00 PM", backend_time:"18:00" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "07:00 PM" ,backend_time:"19:00"},
+  { bus: "Bus 2", from: "Institute", to: "Sadar", time: "08:50 PM", backend_time:"20:50" },
+  { bus: "Bus 1", from: "Institute", to: "Sadar", time: "08:20 PM", backend_time:"20:20" },
 
   {
     bus: "Bus 2",
@@ -22,13 +22,13 @@ const weekdaySchedule = [
     time: "07:10–08:10 PM",
   },
 
-  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "03:45 PM" },
-  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "04:30 PM" },
-  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "06:00 PM" },
-  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "06:30 PM" },
-  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "07:40 PM" },
-  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "09:00 PM" },
-  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "09:30 PM" },
+  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "03:45 PM" ,backend_time:"15:45"},
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "04:30 PM",backend_time:"16:30" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "06:00 PM",backend_time:"18:00" },
+  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "06:30 PM",backend_time:"18:30" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "07:40 PM",backend_time:"19:40" },
+  { bus: "Bus 1", from: "Sadar", to: "Institute", time: "09:00 PM", backend_time:"21:00" },
+  { bus: "Bus 2", from: "Sadar", to: "Institute", time: "09:30 PM",backend_time:"21:30" },
 
   {
     bus: "Bus 2",
