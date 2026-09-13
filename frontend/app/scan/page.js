@@ -76,7 +76,7 @@ export default function AdminScannerPage() {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       // Call backend with Admin Bearer token
-      const res = await fetch(`${API_URL}/api/booking/admin/verify-ticket/${ticketCode}`, {
+      const res = await fetch(`${API_URL}/api/bookings/admin/verify-ticket/${ticketCode}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${adminToken}`,
