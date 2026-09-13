@@ -137,7 +137,7 @@ const Navbar = () => {
 
         <li>
           <Link
-            href="/contact"
+            href="https://www.iiitdmj.ac.in/downloads/time%20table%20Detailed.pdf"
             className="font-bold text-white transition hover:text-green-400"
           >
             Contact
@@ -263,7 +263,7 @@ const Navbar = () => {
 
             <li>
               <Link
-                href="/contact"
+                href="https://www.iiitdmj.ac.in/downloads/time%20table%20Detailed.pdf"
                 onClick={closeMobileMenu}
                 className="block font-bold text-white transition hover:text-green-400"
               >
