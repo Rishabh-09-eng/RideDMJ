@@ -1,8 +1,7 @@
-from trip_schedule import BUS_SCHEDULE
-from fastapi import Depends, Session
+from datetime import date
+from sqlalchemy.orm import Session
 from trip_schedule import BUS_SCHEDULE
 from models import TripsDB, BookingsDB
-from datetime import date
 
 def create_daily_trips(db: Session):
     db.query(BookingsDB).delete()
@@ -17,7 +16,7 @@ def create_daily_trips(db: Session):
 
         trip = TripsDB(
             t_bus_id=schedule["bus_id"],
-            t_time=schedule["time"],
+            t_time=schedule.get("time") or schedule.get("backend_time"),
             t_direction=schedule["direction"]
         )
 
