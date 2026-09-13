@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function MyBookingPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +21,8 @@ export default function MyBookingPage() {
       }
 
       try {
-        const response = await fetch(
-          "http://localhost:8000/api/bookings/my-bookings",
+        let response = await fetch(
+          `${API_URL}/api/bookings/my-bookings`,
           {
             method: "GET",
             headers: {
@@ -28,14 +30,23 @@ export default function MyBookingPage() {
               "Content-Type": "application/json",
             },
           }
-        );
+        ).catch(() => null);
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.detail || "Could not fetch bookings.");
+        if (!response || !response.ok) {
+          response = await fetch(`${API_URL}/bookings/my-bookings`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }).catch(() => null);
         }
 
+        if (!response || !response.ok) {
+          throw new Error("Could not fetch bookings from server.");
+        }
+
+        const data = await response.json();
         setTickets(data.tickets || []);
       } catch (err) {
         console.error("Failed to fetch tickets:", err);
@@ -47,6 +58,11 @@ export default function MyBookingPage() {
 
     fetchTickets();
   }, [router]);
+
+  const originUrl =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 sm:py-10">
@@ -83,7 +99,7 @@ export default function MyBookingPage() {
           <div className="space-y-6">
             {tickets.map((ticket) => {
               const verifyUrl = ticket.ticket_code
-                ? `http://localhost:8000/api/bookings/admin/verify?code=${ticket.ticket_code}`
+                ? `${originUrl}/admin/verify?code=${ticket.ticket_code}`
                 : "";
 
               const qrUrl = verifyUrl
