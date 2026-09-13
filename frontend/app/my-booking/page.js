@@ -139,11 +139,6 @@ export default function MyBookingPage() {
                       </span>
                     </p>
 
-                    {ticket.ticket_code && (
-                      <p className="inline-block rounded bg-slate-100 px-2 py-1 font-mono text-xs text-slate-600">
-                        Ticket Code: {ticket.ticket_code}
-                      </p>
-                    )}
                   </div>
 
                   {ticket.status === "CONFIRMED" && qrUrl && (
