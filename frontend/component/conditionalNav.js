@@ -6,7 +6,11 @@ import Navbar from "@/component/Navbar";
 export default function ConditionalNavbar() {
   const pathname = usePathname();
 
-  if (pathname === "/login" || pathname==="/register" || pathname==="/admin") {
+  if (
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname?.startsWith("/admin")
+  ) {
     return null;
   }
 

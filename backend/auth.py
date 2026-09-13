@@ -1,87 +1,34 @@
 import os
-from jose import JWTError, jwt
-from datetime import datetime, timedelta, timezone
-from fastapi import Depends, status, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-
-auth_scheme = OAuth2PasswordBearer(tokenUrl='login')
-# exp_mins = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-sec_key = os.getenv("SECRET_KEY")
-algo = os.getenv("ALGORITHM")
-# print("SECRET_KEY:", sec_key)
-# print("ALGORITHM:", algo)
-# def create_access_token(data: dict) :
-#     d_copy = data.copy()
-#     expire = datetime.now(timezone.utc)+timedelta(minutes=exp_mins)
-
-#     d_copy.update({"exp":expire})
-
-#     token = jwt.encode(d_copy, sec_key, algorithm=algo)
-
-#     return token
-
-# def verify_token(token: str, error): 
-#     try:
-#         print(jwt.get_unverified_header(token))
-#         payload = jwt.decode(token, sec_key, algorithms=[algo])
-#         id: str = payload.get("sub")
-
-#         if id==None:
-#             raise error
-
-#         return id
-
-#     except JWTError:
-#         raise error
-
-# def get_cur_user(token: str = Depends(auth_scheme)):
-#     error = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Couldn't verify credentials.")
-
-#     return verify_token(token, error)
-
-import os
 import httpx
-
 from jose import JWTError, jwt
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-
 
 auth_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
+JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json" if SUPABASE_URL else ""
+SUPABASE_ISSUER = f"{SUPABASE_URL}/auth/v1" if SUPABASE_URL else ""
 
-JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
-SUPABASE_ISSUER = f"{SUPABASE_URL}/auth/v1"
 
-
-def verify_token(token: str, error):
+def decode_supabase_payload(token: str, error: HTTPException) -> dict:
     try:
         response = httpx.get(
             JWKS_URL,
             timeout=5.0
         )
-
         response.raise_for_status()
-
         jwks = response.json()
 
         header = jwt.get_unverified_header(token)
-
         kid = header.get("kid")
-
         if not kid:
             raise error
 
         key = next(
-            (
-                key
-                for key in jwks["keys"]
-                if key.get("kid") == kid
-            ),
+            (k for k in jwks["keys"] if k.get("kid") == kid),
             None
         )
-
         if key is None:
             raise error
 
@@ -92,13 +39,7 @@ def verify_token(token: str, error):
             audience="authenticated",
             issuer=SUPABASE_ISSUER
         )
-
-        user_id = payload.get("sub")
-
-        if user_id is None:
-            raise error
-
-        return user_id
+        return payload
 
     except (
         JWTError,
@@ -109,25 +50,44 @@ def verify_token(token: str, error):
         raise error
 
 
-def get_cur_user(token: str = Depends(auth_scheme)):
+def verify_token(token: str, error: HTTPException) -> str:
+    payload = decode_supabase_payload(token, error)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise error
+    return user_id
+
+
+def get_cur_user(token: str = Depends(auth_scheme)) -> str:
     error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Couldn't verify credentials."
     )
-
     return verify_token(token, error)
 
-def get_cur_admin(token: str = Depends(auth_scheme)):
-    error = HTTPException(
+
+def get_cur_admin(token: str = Depends(auth_scheme)) -> str:
+    unauthorized_error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Couldn't verify credentials for admin."
+        detail="Couldn't verify credentials."
+    )
+    forbidden_error = HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Access forbidden: Admin privileges required."
     )
 
-    payload = verify_token(token, error)
+    payload = decode_supabase_payload(token, unauthorized_error)
 
-    role = payload.get("app_metadata", {}).get("role")
+    # Check for admin role in app_metadata, user_metadata, or direct claim
+    app_meta = payload.get("app_metadata", {})
+    user_meta = payload.get("user_metadata", {})
+    role = app_meta.get("role") or user_meta.get("role") or payload.get("role")
 
-    if role!="admin":
-        raise error
+    if role != "admin":
+        raise forbidden_error
 
-    return payload.get("sub")
+    user_id = payload.get("sub")
+    if not user_id:
+        raise unauthorized_error
+
+    return user_id

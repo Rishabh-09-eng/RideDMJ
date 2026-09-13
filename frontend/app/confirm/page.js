@@ -4,14 +4,19 @@ import React, { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Script from "next/script";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 function ConfirmContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
+  const tripId = searchParams.get("tripId");
   const busNumber = searchParams.get("bus");
   const time = searchParams.get("time");
+  const direction = searchParams.get("direction");
+  const busId = busNumber?.replace("Bus ", "");
 
   const handlePayment = async () => {
     try {
@@ -25,34 +30,84 @@ function ConfirmContent() {
         return;
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payment/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // 1. Create booking and payment session
+      const response = await fetch(`${API_URL}/api/trips/book`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          trip_id: tripId ? Number(tripId) : undefined,
+          bus_id: busId ? Number(busId) : undefined,
+          bus_slot: time || undefined,
+        }),
+      });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        alert(data.detail || "Could not create payment");
+        const detail = data.detail;
+        const message =
+          typeof detail === "string"
+            ? detail
+            : detail?.message ||
+              detail?.error ||
+              `Could not create booking (status ${response.status})`;
+        alert(message);
         return;
       }
 
+      if (!data.payment?.payment_session_id) {
+        alert("Payment session could not be initialized.");
+        return;
+      }
+
+      // 2. Open Cashfree Checkout Modal
       const cashfree = window.Cashfree({
         mode: "sandbox",
       });
 
-      cashfree.checkout({
-        paymentSessionId: data.payment_session_id,
-      });
+      cashfree
+        .checkout({
+          paymentSessionId: data.payment.payment_session_id,
+          redirectTarget: "_modal",
+        })
+        .then(async (result) => {
+          if (result.error) {
+            console.warn("Checkout modal closed or error:", result.error);
+          }
+
+          // 3. Verify Payment Status with Backend
+          try {
+            const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                order_id: data.payment.order_id,
+                trip_id: data.trip_id,
+              }),
+            });
+
+            const verifyData = await verifyRes.json().catch(() => ({}));
+
+            if (verifyRes.ok && verifyData.success) {
+              alert("Payment successful! Booking confirmed.");
+              router.push("/my-booking");
+            } else {
+              alert(verifyData.message || "Payment not completed.");
+            }
+          } catch (err) {
+            console.error("Payment verification error:", err);
+            alert("Unable to verify payment status.");
+          }
+        });
     } catch (error) {
       console.error("Payment error:", error);
-      alert("Something went wrong");
+      alert("Something went wrong while initiating booking.");
     } finally {
       setLoading(false);
     }
@@ -61,7 +116,7 @@ function ConfirmContent() {
   return (
     <>
       <Script
-        src="https://sdk.cashfree.com/pg/orders"
+        src="https://sdk.cashfree.com/js/v3/cashfree.js"
         strategy="afterInteractive"
       />
 
@@ -88,8 +143,10 @@ function ConfirmContent() {
 
             <div className="flex justify-between gap-4">
               <span className="text-slate-500">Route</span>
-              <span className="font-semibold text-slate-900">
-                Institute → Sadar
+              <span className="text-right font-semibold text-slate-900">
+                {direction
+                  ? direction.replace(/_/g, " ")
+                  : "Institute → Sadar"}
               </span>
             </div>
 
