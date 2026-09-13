@@ -35,10 +35,8 @@ export default function BookTicketPage() {
 
     const loadTrips = async () => {
       try {
-        // Try primary /api/trips route first
         let response = await fetch(`${API_URL}/api/trips`).catch(() => null);
 
-        // Fallback to /trips in case a collaborator's branch runs without /api prefix
         if (!response || !response.ok) {
           response = await fetch(`${API_URL}/trips`).catch(() => null);
         }
