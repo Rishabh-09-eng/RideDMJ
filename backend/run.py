@@ -8,6 +8,7 @@ from payments.routes import router as payment_router
 from trips.routes import router as trips_router
 from bookings.routes import router as bookings_router
 from trips.scheduler import scheduler
+from bookings.admin_routes import router as admin_routes
 
 import models
 
@@ -51,3 +52,4 @@ app.include_router(bookings_router, prefix="/api")
 app.include_router(payment_router)
 app.include_router(trips_router)
 app.include_router(bookings_router)
+app.include_router(admin_routes)

@@ -139,6 +139,7 @@ export default function MyBookingPage() {
                       </span>
                     </p>
 
+                    
                   </div>
 
                   {ticket.status === "CONFIRMED" && qrUrl && (

@@ -16,7 +16,6 @@ def get_my_bookings(
 ):
     now = datetime.now(timezone.utc)
 
-    # Automatically expire any pending bookings that timed out
     pending_bookings = (
         db.query(BookingsDB)
         .filter(
@@ -84,7 +83,7 @@ def admin_verify_ticket(
     if booking.b_status == "USED":
         return {
             "status": "ALREADY_USED",
-            "message": "⚠️ Ticket already USED!",
+            "message": "Ticket already USED!",
             "trip": trip_info
         }
 
@@ -101,6 +100,6 @@ def admin_verify_ticket(
 
     return {
         "status": "SUCCESS",
-        "message": "✅ Ticket Verified & Marked as USED!",
+        "message": "Ticket Verified & Marked as USED!",
         "trip": trip_info
     }
