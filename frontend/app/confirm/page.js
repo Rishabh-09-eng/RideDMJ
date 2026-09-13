@@ -54,12 +54,49 @@ const Page = () => {
       }
 
       const cashfree = window.Cashfree({
-        mode: "sandbox",
-      });
+            mode: "sandbox",
+          });
+    
+          cashfree
+            .checkout({
+              paymentSessionId: data.payment.payment_session_id,
+              redirectTarget: "_modal",
+            })
+            .then(async (result) => {
+              if (result.error) {
+                console.warn("Checkout closed or failed:", result.error);
+              }
+    
+              // Call backend to verify status with Cashfree & update Supabase
+              try {
+                const verifyRes = await fetch(
+                  "http://localhost:8000/api/payment/verify",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                      order_id: data.payment.order_id,
+                      trip_id: data.trip_id,
+                    }),
+                  }
+                );
 
-      cashfree.checkout({
-        paymentSessionId: data.payment.payment_session_id,
-      });
+                const verifyData = await verifyRes.json();
+
+                if (verifyRes.ok && verifyData.success) {
+                  alert("Payment successful! Booking confirmed.");
+                  router.push("/my-booking");
+                } else {
+                  alert(verifyData.message || "Payment not completed.");
+                }
+              } catch (err) {
+                console.error("Error during payment verification:", err);
+                alert("Unable to verify payment status.");
+              }
+            });
     } catch (error) {
       const message =
         error instanceof TypeError

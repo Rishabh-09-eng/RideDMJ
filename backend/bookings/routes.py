@@ -1,7 +1,9 @@
-# from sqlalchemy.orm import Session
-# from fastapi import Depends, Response, status, HTTPException, APIRouter
+from fastapi import APIRouter
+from database import get_db
+from sqlalchemy.orm import Depends, Session
 
-# router = APIRouter(prefix="/ticket")
+router = APIRouter(prefix="/booking_info")
 
-# @router.get("/book")
-# def book_ticket():
+@router.get("/generate_ticket")
+def generate_tkt(db: Session=Depends(get_db)):
+    pass
