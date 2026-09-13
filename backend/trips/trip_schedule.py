@@ -49,47 +49,6 @@ BUS_SCHEDULE = [
     },
 
     # =========================
-    # WEEKDAYS — SADAR → INSTITUTE
-    # =========================
-
-    {
-        "bus_id": 2,
-        "backend_time": time(15, 45),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 0
-    },
-    {
-        "bus_id": 1,
-        "backend_time": time(16, 30),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 0
-    },
-    {
-        "bus_id": 2,
-        "backend_time": time(18, 30),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 0
-    },
-    {
-        "bus_id": 1,
-        "backend_time": time(19, 40),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 0
-    },
-    {
-        "bus_id": 1,
-        "backend_time": time(21, 0),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 0
-    },
-    {
-        "bus_id": 2,
-        "backend_time": time(21, 30),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 0
-    },
-
-    # =========================
     # WEEKENDS — INSTITUTE → SADAR
     # =========================
 
@@ -127,47 +86,6 @@ BUS_SCHEDULE = [
         "bus_id": 2,
         "backend_time": time(20, 50),
         "direction": "INSTITUTE_TO_SADAR",
-        "day_type": 1
-    },
-
-    # =========================
-    # WEEKENDS — SADAR → INSTITUTE
-    # =========================
-
-    {
-        "bus_id": 2,
-        "backend_time": time(16, 30),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 1
-    },
-    {
-        "bus_id": 1,
-        "backend_time": time(17, 20),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 1
-    },
-    {
-        "bus_id": 1,
-        "backend_time": time(18, 30),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 1
-    },
-    {
-        "bus_id": 2,
-        "backend_time": time(19, 30),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 1
-    },
-    {
-        "bus_id": 1,
-        "backend_time": time(21, 15),
-        "direction": "SADAR_TO_INSTITUTE",
-        "day_type": 1
-    },
-    {
-        "bus_id": 2,
-        "backend_time": time(21, 30),
-        "direction": "SADAR_TO_INSTITUTE",
         "day_type": 1
     }
 ]
