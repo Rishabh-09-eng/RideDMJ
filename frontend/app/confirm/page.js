@@ -11,8 +11,10 @@ const Page = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const tripId = searchParams.get("tripId");
   const busNumber = searchParams.get("bus");
   const time = searchParams.get("time");
+  const direction = searchParams.get("direction");
   const busId = busNumber?.replace("Bus ", "");
 
   const handlePayment = async () => {
@@ -35,6 +37,7 @@ const Page = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
+            trip_id: tripId ? Number(tripId) : undefined,
             bus_id: Number(busId),
             bus_slot: time,
           }),
@@ -156,7 +159,7 @@ const Page = () => {
               </span>
 
               <span className="text-right text-sm font-semibold text-slate-900 sm:text-base">
-                Institute → Sadar
+                {direction ? direction.replace(/_/g, " ") : "Institute → Sadar"}
               </span>
             </div>
 
