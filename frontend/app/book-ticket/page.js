@@ -1,176 +1,108 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import schedule from "@/data/schedule";
 import { useRouter } from "next/navigation";
 
+function formatTo12Hour(time) {
+  if (!time) return "Time unavailable";
+
+  // Handles formats like 15:00:00 or 15:00
+  const [hours, minutes] = time.split(":").map(Number);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return time;
+  }
+
+  const period = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12;
+
+  return `${formattedHours}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
 export default function BookTicketPage() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const [trips, setTrips] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+  });
 
-    useEffect(() => {
-        const fetchTrips = async () => {
-            try {
-                setLoading(true);
-                setError("");
+  // Show only buses operating on today's day
+  const availableSlots = schedule.filter((slot) =>
+    slot.operatingDays.includes(today)
+  );
 
-                const response = await fetch(
-                    "http://localhost:8000/api/trips/"
-                );
+  return (
+    <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 text-center sm:text-left">
+          <p className="text-sm font-semibold text-green-600 sm:text-base">
+            Today is {today}
+          </p>
 
-                const data = await response.json();
+          <h1 className="mt-2 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
+            Book Your Bus Ticket
+          </h1>
 
-                if (!response.ok) {
-                    throw new Error(
-                        data.detail || "Failed to fetch bus trips"
-                    );
-                }
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+            Select an available bus operating today from Institute to Sadar.
+          </p>
+        </div>
 
-                setTrips(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error("Error fetching trips:", error);
-                setError("Unable to load bus slots. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-slate-900 sm:text-2xl">
+            Available Bus Slots
+          </h2>
 
-        fetchTrips();
-    }, []);
-
-    const handleSelectTrip = (trip) => {
-        router.push(
-            `/confirm?tripId=${encodeURIComponent(
-                trip.t_id
-            )}&bus=${encodeURIComponent(
-                trip.t_bus_id
-            )}&time=${encodeURIComponent(
-                trip.t_time
-            )}`
-        );
-    };
-
-    return (
-        <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-            <div className="mx-auto max-w-6xl">
-                <div className="mb-8 text-center sm:text-left">
-                    <p className="text-sm font-semibold text-green-600 sm:text-base">
-                        RideDMJ
-                    </p>
-
-                    <h1 className="mt-2 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
-                        Book Your Bus Ticket
-                    </h1>
-
-                    <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-                        Select an available bus slot for your journey.
-                    </p>
-                </div>
-
-                {loading && (
-                    <div className="rounded-xl bg-white p-6 text-center shadow-sm">
-                        <p className="text-slate-600">
-                            Loading available bus slots...
-                        </p>
-                    </div>
-                )}
-
-                {!loading && error && (
-                    <div className="rounded-xl bg-red-50 p-6 text-center">
-                        <p className="text-sm text-red-700 sm:text-base">
-                            {error}
-                        </p>
-
-                        <button
-                            type="button"
-                            onClick={() => window.location.reload()}
-                            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
-                        >
-                            Try Again
-                        </button>
-                    </div>
-                )}
-
-                {!loading && !error && trips.length === 0 && (
-                    <div className="rounded-xl bg-white p-6 text-center shadow-sm">
-                        <p className="text-slate-600">
-                            No bus slots are available today.
-                        </p>
-                    </div>
-                )}
-
-                {!loading && !error && trips.length > 0 && (
-                    <section>
-                        <h2 className="mb-4 text-xl font-semibold text-slate-900 sm:text-2xl">
-                            Available Bus Slots
-                        </h2>
-
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-                            {trips.map((trip) => {
-                                const availableSeats =
-                                    trip.t_available_seats ?? 0;
-
-                                const isFull = availableSeats <= 0;
-
-                                return (
-                                    <div
-                                        key={trip.t_id}
-                                        className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5"
-                                    >
-                                        <div className="flex flex-wrap items-center justify-between gap-2">
-                                            <span className="text-sm font-semibold text-slate-500">
-                                                Bus {trip.t_bus_id}
-                                            </span>
-
-                                            <span
-                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                                    isFull
-                                                        ? "bg-red-100 text-red-700"
-                                                        : "bg-green-100 text-green-700"
-                                                }`}
-                                            >
-                                                {isFull
-                                                    ? "Full"
-                                                    : "Available"}
-                                            </span>
-                                        </div>
-
-                                        <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:mt-5 sm:text-3xl">
-                                            {String(trip.t_time)}
-                                        </h3>
-
-                                        <p className="mt-2 text-sm text-slate-600 sm:text-base">
-                                            {trip.t_direction}
-                                        </p>
-
-                                        <p className="mt-4 text-sm text-slate-600">
-                                            <span className="font-semibold text-slate-800">
-                                                Available seats:
-                                            </span>{" "}
-                                            {availableSeats}
-                                        </p>
-
-                                        <button
-                                            type="button"
-                                            disabled={isFull}
-                                            onClick={() =>
-                                                handleSelectTrip(trip)
-                                            }
-                                            className="mt-5 w-full rounded-lg bg-green-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 sm:text-base"
-                                        >
-                                            {isFull
-                                                ? "Bus Full"
-                                                : "Select Trip"}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </section>
-                )}
+          {availableSlots.length === 0 ? (
+            <div className="rounded-xl bg-white p-5 text-center shadow-sm sm:p-6">
+              <p className="text-sm text-slate-600 sm:text-base">
+                No bus slots are available today.
+              </p>
             </div>
-        </main>
-    );
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+              {availableSlots.map((slot) => (
+                <button
+                  key={slot.id}
+                  type="button"
+                  onClick={() => {
+                    router.push(
+                      `/confirm?bus=${encodeURIComponent(
+                        slot.bus
+                      )}&time=${encodeURIComponent(
+                        slot.backend_time
+                      )}`
+                    );
+                  }}
+                  className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:border-green-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:p-5"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-slate-500">
+                      {slot.bus}
+                    </span>
+
+                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                      Available today
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:mt-5 sm:text-3xl">
+                    {formatTo12Hour(slot.backend_time)}
+                  </h3>
+
+                  <p className="mt-2 text-sm text-slate-600 sm:text-base">
+                    Institute → Sadar
+                  </p>
+
+                  <p className="mt-4 text-sm font-semibold text-green-600">
+                    Click to book →
+                  </p>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
+  );
 }
