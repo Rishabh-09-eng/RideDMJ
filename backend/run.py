@@ -31,3 +31,9 @@ app.include_router(payment_router, prefix="/api")
 app.include_router(trips_router, prefix="/api")
 app.include_router(booking_info_router, prefix="/api")
 app.include_router(bookings_router, prefix="/api")
+
+# Also mount without /api prefix for backward compatibility
+app.include_router(payment_router)
+app.include_router(trips_router)
+app.include_router(booking_info_router)
+app.include_router(bookings_router)
