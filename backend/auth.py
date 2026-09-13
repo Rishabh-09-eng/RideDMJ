@@ -57,7 +57,6 @@ SUPABASE_ISSUER = f"{SUPABASE_URL}/auth/v1"
 
 def verify_token(token: str, error):
     try:
-        # Get Supabase public signing keys
         response = httpx.get(
             JWKS_URL,
             timeout=5.0
@@ -67,7 +66,6 @@ def verify_token(token: str, error):
 
         jwks = response.json()
 
-        # Read JWT header
         header = jwt.get_unverified_header(token)
 
         kid = header.get("kid")
@@ -75,7 +73,6 @@ def verify_token(token: str, error):
         if not kid:
             raise error
 
-        # Find the public key used to sign this token
         key = next(
             (
                 key
@@ -88,7 +85,6 @@ def verify_token(token: str, error):
         if key is None:
             raise error
 
-        # Verify the Supabase JWT
         payload = jwt.decode(
             token,
             key,
@@ -97,7 +93,6 @@ def verify_token(token: str, error):
             issuer=SUPABASE_ISSUER
         )
 
-        # Supabase stores the user's UUID in "sub"
         user_id = payload.get("sub")
 
         if user_id is None:
@@ -121,3 +116,18 @@ def get_cur_user(token: str = Depends(auth_scheme)):
     )
 
     return verify_token(token, error)
+
+def get_cur_admin(token: str = Depends(auth_scheme)):
+    error = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Couldn't verify credentials for admin."
+    )
+
+    payload = verify_token(token, error)
+
+    role = payload.get("app_metadata", {}).get("role")
+
+    if role!="admin":
+        raise error
+
+    return payload.get("sub")

@@ -83,7 +83,7 @@ export default function MyBookingPage() {
           <div className="space-y-6">
             {tickets.map((ticket) => {
               const verifyUrl = ticket.ticket_code
-                ? `http://localhost:8000/api/bookings/verify/${ticket.ticket_code}`
+                ? `http://localhost:8000/api/bookings/admin/verify?code=${ticket.ticket_code}`
                 : "";
 
               const qrUrl = verifyUrl

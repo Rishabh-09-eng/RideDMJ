@@ -14,7 +14,6 @@ def create_daily_trips(db: Session):
             db.add(bus)
     db.commit()
 
-    # Clear old bookings and trips
     db.query(BookingsDB).delete()
     db.query(TripsDB).delete()
 
