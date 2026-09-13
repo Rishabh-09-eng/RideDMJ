@@ -44,6 +44,7 @@ async def create_payment(order_id):
         "order_currency": "INR",
         "customer_details": {
             "customer_id": "test_user",
+            "customer_phone": "9999999999"
         }
     }
 
