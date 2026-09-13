@@ -23,9 +23,8 @@ from .forms import BookRequest
 router = APIRouter(prefix="/trips")
 
 @router.get("/")
-def get_ticket(db: Session=Depends(get_db)):
-    today = 0 if date.today().weekday() < 5 else 1
-    trips = db.query(TripsDB).get()
+def get_trips(db: Session = Depends(get_db)):
+    trips = db.query(TripsDB).all()
     return trips
 
 @router.post("/book")

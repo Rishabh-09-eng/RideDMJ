@@ -17,7 +17,7 @@ def create_daily_trips(db: Session):
 
         trip = TripsDB(
             t_bus_id=schedule["bus_id"],
-            t_time=schedule["time"],
+            t_time=schedule["backend_time"]
             t_direction=schedule["direction"]
         )
 
