@@ -1,7 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from database import SessionLocal
-from trip_creator import create_daily_trips
+from .trip_creator import create_daily_trips
 
 
 scheduler = AsyncIOScheduler()

@@ -48,6 +48,8 @@ export default function BookTicketPage() {
                 trip.t_bus_id
             )}&time=${encodeURIComponent(
                 trip.t_time
+            )}&direction=${encodeURIComponent(
+                trip.t_direction || ""
             )}`
         );
     };
