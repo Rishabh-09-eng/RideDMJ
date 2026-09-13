@@ -75,7 +75,7 @@ export default function AdminScannerPage() {
 
     try {
       // Call backend with Admin Bearer token
-      const res = await fetch(`http://localhost:8000/api/admin/verify-ticket/${ticketCode}`, {
+      const res = await fetch(`http://ridedmj-rosy.vercel.com/admin/verify-ticket/${ticketCode}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${adminToken}`,
