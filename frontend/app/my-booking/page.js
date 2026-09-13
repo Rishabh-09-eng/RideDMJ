@@ -1,26 +1,26 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-const Page = () => {
-  const [bookings, setBookings] = useState([]);
+export default function MyBookingPage() {
+  const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
       try {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          setError("Please log in to view your bookings.");
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch(
-          "http://localhost:8000/api/booking_info/my-bookings",
+          "http://localhost:8000/api/bookings/my-bookings",
           {
             method: "GET",
             headers: {
@@ -36,39 +36,39 @@ const Page = () => {
           throw new Error(data.detail || "Could not fetch bookings.");
         }
 
-        setBookings(data);
+        setTickets(data.tickets || []);
       } catch (err) {
-        console.error("Booking fetch error:", err);
+        console.error("Failed to fetch tickets:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBookings();
-  }, []);
+    fetchTickets();
+  }, [router]);
 
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-5xl">
-        <h1 className="text-center text-3xl font-bold text-slate-900 sm:text-4xl">
+      <div className="mx-auto max-w-3xl">
+        <h1 className="mb-6 text-center text-3xl font-bold text-slate-900 sm:text-4xl">
           My Bookings
         </h1>
 
         {loading && (
-          <p className="mt-8 text-center text-slate-600">
-            Loading your bookings...
-          </p>
+          <div className="rounded-xl bg-white p-6 text-center shadow-sm">
+            <p className="text-slate-600">Loading your bookings...</p>
+          </div>
         )}
 
         {!loading && error && (
-          <div className="mx-auto mt-8 max-w-lg rounded-xl bg-red-100 p-5 text-center text-red-700">
+          <div className="rounded-xl bg-red-100 p-5 text-center text-red-700">
             {error}
           </div>
         )}
 
-        {!loading && !error && bookings.length === 0 && (
-          <div className="mx-auto mt-8 max-w-lg rounded-xl bg-white p-6 text-center shadow-sm">
+        {!loading && !error && tickets.length === 0 && (
+          <div className="rounded-xl bg-white p-6 text-center shadow-sm">
             <h2 className="text-xl font-semibold text-slate-800">
               No bookings found
             </h2>
@@ -79,62 +79,85 @@ const Page = () => {
           </div>
         )}
 
-        {!loading && !error && bookings.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {bookings.map((booking) => (
-              <div
-                key={booking.booking_id}
-                className="rounded-2xl bg-white p-5 shadow-sm"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-xl font-bold text-slate-900">
-                    Bus {booking.bus_id}
-                  </h2>
+        {!loading && !error && tickets.length > 0 && (
+          <div className="space-y-6">
+            {tickets.map((ticket) => {
+              const verifyUrl = ticket.ticket_code
+                ? `http://localhost:8000/api/bookings/verify/${ticket.ticket_code}`
+                : "";
 
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
-                    {booking.booking_status || "Booked"}
-                  </span>
+              const qrUrl = verifyUrl
+                ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                    verifyUrl
+                  )}`
+                : null;
+
+              return (
+                <div
+                  key={ticket.booking_id}
+                  className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6"
+                >
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-xl font-bold text-slate-900">
+                        Bus {ticket.bus_id}
+                      </h2>
+
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                        {ticket.status || "CONFIRMED"}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-slate-600">
+                      Time:{" "}
+                      <span className="font-semibold text-slate-900">
+                        {ticket.time}
+                      </span>
+                    </p>
+
+                    <p className="text-sm text-slate-600">
+                      Route:{" "}
+                      <span className="font-semibold text-slate-900">
+                        {ticket.direction?.replace(/_/g, " ") ||
+                          "Institute → Sadar"}
+                      </span>
+                    </p>
+
+                    {ticket.ticket_code && (
+                      <p className="inline-block rounded bg-slate-100 px-2 py-1 font-mono text-xs text-slate-600">
+                        Ticket Code: {ticket.ticket_code}
+                      </p>
+                    )}
+                  </div>
+
+                  {ticket.status === "CONFIRMED" && qrUrl && (
+                    <div className="flex flex-col items-center rounded-xl border border-slate-200 bg-slate-50 p-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={qrUrl}
+                        alt="Ticket QR Code"
+                        className="h-36 w-36"
+                      />
+
+                      <p className="mt-2 text-xs text-slate-500">
+                        Show this QR code to the conductor
+                      </p>
+                    </div>
+                  )}
+
+                  {ticket.status === "USED" && (
+                    <div className="rounded-xl bg-slate-100 px-5 py-4 text-center">
+                      <p className="text-sm font-semibold text-slate-500">
+                        Ticket Used
+                      </p>
+                    </div>
+                  )}
                 </div>
-
-                <div className="mt-5 space-y-3 text-sm text-slate-700">
-                  <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Date</span>
-                    <span className="font-semibold">{booking.date}</span>
-                  </div>
-
-                  <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Time</span>
-                    <span className="font-semibold">{booking.time}</span>
-                  </div>
-
-                  <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Direction</span>
-                    <span className="text-right font-semibold">
-                      {booking.direction}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Booking ID</span>
-                    <span className="font-semibold">
-                      {booking.booking_id}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between gap-4">
-                    <span className="text-slate-500">Trip ID</span>
-                    <span className="font-semibold">
-                      {booking.trip_id}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
     </main>
   );
-};
-
-export default Page;
+}

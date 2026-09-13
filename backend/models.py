@@ -77,3 +77,10 @@ class BookingsDB(Base):
         "expires_at",
         DateTime
     )
+
+    b_ticket_code = Column(
+        "ticket_code",
+        String,
+        nullable=True,
+        unique=True
+    )
