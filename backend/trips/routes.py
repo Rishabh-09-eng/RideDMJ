@@ -37,6 +37,7 @@ def release_expired_bookings(db: Session):
         db.commit()
 
 
+@router.get("")
 @router.get("/")
 def get_trips(db: Session = Depends(get_db)):
     release_expired_bookings(db)
